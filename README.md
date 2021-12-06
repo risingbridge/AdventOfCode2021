@@ -5,4 +5,4 @@ C# Dotnet6
 
 Not the most elegant or efficiant ways, but it works. Kinda.
 
-Stars count: 5 :star:
+Stars count: 6 :star:
