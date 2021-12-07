@@ -33,7 +33,7 @@
 <p>To avoid the most dangerous areas, you need to determine <em>the number of points where at least two lines overlap</em>. In the above example, this is anywhere in the diagram with a <code>2</code> or larger - a total of <code><em>5</em></code> points.</p>
 <p>Consider only horizontal and vertical lines. <em>At how many points do at least two lines overlap?</em></p>
 </article>
-<p>Your puzzle answer was <code>5084</code>.</p><article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>Unfortunately, considering only horizontal and vertical lines doesn't give you the full picture; you need to also consider <em>diagonal lines</em>.</p>
+<article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>Unfortunately, considering only horizontal and vertical lines doesn't give you the full picture; you need to also consider <em>diagonal lines</em>.</p>
 <p>Because of the limits of the hydrothermal vent mapping system, the lines in your list will only ever be horizontal, vertical, or a diagonal line at exactly 45 degrees. In other words:</p>
 <ul>
 <li>An entry like <code>1,1 -&gt; 3,3</code> covers points <code>1,1</code>, <code>2,2</code>, and <code>3,3</code>.</li>
