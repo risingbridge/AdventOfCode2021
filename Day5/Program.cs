@@ -1,4 +1,6 @@
-﻿string[] input = File.ReadAllLines("./input.txt");
+﻿using System.Drawing;
+
+string[] input = File.ReadAllLines("./input.txt");
 List<Line> lines = new List<Line>();
 //True to print array between every added line
 bool displayArray = false;
@@ -134,8 +136,65 @@ for (int y = 0; y < lineArray.GetLength(0); y++)
 
 Console.WriteLine($"PART TWO: ");
 Console.WriteLine($"Number of line-crossings: {crossingsCount}");
+CreateBitmap();
 
 //// FUNCTIONS
+
+//Function to create a bitmap based on the values
+void CreateBitmap()
+{
+    //Needs the highest pixel-value to correctly assign colors
+    int maxPixelValue = 0;
+    for (int y = 0; y < lineArray.GetLength(0); y++)
+    {
+        for (int x = 0; x < lineArray.GetLength(1); x++)
+        {
+            if(lineArray[y, x] > maxPixelValue)
+            {
+                maxPixelValue = lineArray[y, x];
+            }
+        }
+    }
+    Bitmap newImage = new Bitmap(lineArray.GetLength(0) +2, lineArray.GetLength(1) + 2);
+    for (int y = 0; y < lineArray.GetLength(0); y++)
+    {
+        for (int x = 0; x < lineArray.GetLength(1); x++)
+        {
+            int pixelValue = lineArray[y, x];
+            Color pixelColor = Color.White;
+            switch (pixelValue)
+            {
+                case 1:
+                    pixelColor = Color.LightGray;
+                    break;
+                case 2:
+                    pixelColor = Color.DarkGray;
+                    break;
+                case 3:
+                    pixelColor = Color.Black;
+                    break;
+                case 4:
+                    pixelColor = Color.Green;
+                    break;
+                case 5:
+                    pixelColor = Color.Blue;
+                    break;
+                case 6:
+                    pixelColor = Color.Yellow;
+                    break;
+                case 7:
+                    pixelColor = Color.Orange;
+                    break;
+                case 8:
+                    pixelColor = Color.Red;
+                    break;
+            }
+            newImage.SetPixel(x, y, pixelColor);
+
+        }
+    }
+    newImage.Save("./output.bmp");
+}
 
 //Function to return a list of vectors with all points in a line
 List<Vector> returnLineList(Line line)
