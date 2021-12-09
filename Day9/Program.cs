@@ -1,5 +1,6 @@
 ﻿//Reads input
 using Day9;
+using System.Drawing;
 
 string[] inputArray = File.ReadAllLines("./input.txt");
 //Finds X and Y-max
@@ -77,7 +78,6 @@ for (int i = 0; i < lowestPoints.Count; i++)
     basinDictionary.Add(basinStart, RemoveDuplicates(basinPositions));
     allBasins.Add(RemoveDuplicates(basinPositions));
 }
-
 ////Prints all basins for testing
 //foreach (KeyValuePair<Vector, List<Vector>> item in basinDictionary)
 //{
@@ -88,6 +88,9 @@ for (int i = 0; i < lowestPoints.Count; i++)
 
 //Print ALL basins
 PrintMultipleBasins(allBasins, heightMap);
+//Create bitmap
+CreateBitmap(allBasins, heightMap, false, "allBasins.bmp");
+
 
 //Find the 3 biggest basins
 List<List<Vector>> biggestBasins = new List<List<Vector>>();
@@ -108,12 +111,60 @@ for (int i = 0; i < 3; i++)
 ////Print 3 biggest basins in one map
 //PrintMultipleBasins(biggestBasins, heightMap);
 
+//Create a bitmap with only largest basins
+CreateBitmap(biggestBasins, heightMap, true, "largestBasins.bmp");
+
 //multiply the 3 largest basins
 long basinSum = biggestBasins[0].Count * biggestBasins[1].Count * biggestBasins[2].Count;
 Console.WriteLine($"PART TWO:");
 Console.WriteLine($"The sum is {basinSum}");
 
 ////FUNCTIONS
+
+//Function to generate a bitmap (Needs windows!)
+void CreateBitmap(List<List<Vector>> basins, int[,] heightMap, bool addBasins, string filename)
+{
+    List<Vector> basin = new List<Vector>();
+    foreach (List<Vector> item in basins)
+    {
+        foreach (Vector vector in item)
+        {
+            basin.Add(vector);
+        }
+    }
+
+    Bitmap newImage = new Bitmap(heightMap.GetLength(0), heightMap.GetLength(1));
+    Color defaultColor = Color.Black;
+    Color basinColor = Color.Green;
+    float stepAlpha = 255 / 9;
+    for (int y = 0; y < heightMap.GetLength(0); y++)
+    {
+        for (int x = 0;x < heightMap.GetLength(1); x++)
+        {
+            int currentVal = heightMap[y, x];
+            float currentAlpha = currentVal * stepAlpha;
+            Color currentColor = defaultColor;
+            if (addBasins)
+            {
+                Vector curr = new Vector
+                {
+                    x = x,
+                    y = y
+                };
+                if(DoesContainVector(curr, basin))
+                {
+                    currentColor = basinColor;
+                }
+            }
+            currentColor = Color.FromArgb((int)currentAlpha, currentColor);
+            newImage.SetPixel(x,y, currentColor);
+
+        }
+    }
+    newImage.Save($"./{filename}");
+    
+}
+
 //Print all basins at one
 void PrintMultipleBasins(List<List<Vector>> basins, int[,] heightMap)
 {
