@@ -116,78 +116,35 @@ Console.WriteLine($"Number of incomplete lines: {incompleteLines.Count}");
 List<int> debugScores = new List<int>();
 foreach (string line in incompleteLines)
 {
-    Stack<char> syntaxStack = new Stack<char>();
-    for(int i = line.Length -1; i >= 0; i--)
+    List<char> openings = new List<char>();
+    Stack<char> closings = new Stack<char>();
+    foreach (char c in line)
     {
-        syntaxStack.Push(line[i]);
-    }
-
-    string syntaxString = string.Empty;
-    while(syntaxStack.Count > 0)
-    {
-        char newChar = syntaxStack.Pop();
-        if(syntaxString.Length == 0)
+        if (isOpening(c))
         {
-            syntaxString += newChar;
+            openings.Add(c);
         }
         else
         {
-            //Try to close
-            char prevChar = syntaxString[syntaxString.Length - 1];
-            //Console.WriteLine($"Testing {prevChar} vs {newChar}");
-            if(isValidClose(prevChar, newChar))
-            {
-                //Console.WriteLine($"Is valid close: {isValidClose(prevChar, newChar)}");
-                syntaxString.Remove(syntaxString.Length - 1, 1);
-            }
-            else
-            {
-                syntaxString += newChar;
-            }
+            closings.Push(c);
         }
+    }
+    //Console.WriteLine($"{line} has {openings.Count} openings and {closings.Count} closings");
+    while(closings.Count > 0)
+    {
+        char closing = closings.Pop();
+        openings.RemoveAt(openings.FindIndex(c => c == FindValidOpening(closing)));
+    }
+    List<char> missingCloses = new List<char>();
+    string closeString = string.Empty;
+    foreach (char c in openings)
+    {
+        missingCloses.Add(FindValidClose(c));
+        closeString += FindValidClose(c);
+    }
+    long errorSum = SumPartTwo(missingCloses);
+    Console.WriteLine($"{line} - {closeString}");
 
-        //Console.WriteLine(syntaxString);
-        if (timeDelayPartTwo)
-        {
-            Thread.Sleep(timeDelay);
-        }
-    }
-    //Console.WriteLine($"Original line: {line}");
-    //Console.WriteLine($"Closed line: {syntaxString}\n");
-    //Loop through to close open chunks
-    List<char> needToComplete = new List<char>();
-    for(int i = syntaxString.Length - 1; i >= 0; i--)
-    {
-        char lastChar = syntaxString[i];
-        //Find closing char and add it to list, so we can calculate sum
-        if (isOpening(lastChar))
-        {
-            char closeChar = FindValidClose(lastChar);
-            needToComplete.Add(closeChar);
-            syntaxString.Remove(i, 1);
-        }
-        else
-        {
-            //Find the closing part in the string
-            for (int y = i - 1; y >= 0; y--)
-            {
-                char testChar = syntaxString[y];
-                if(testChar == FindValidOpening(lastChar))
-                {
-                    syntaxString.Remove(i, 1);
-                    syntaxString.Remove(y, 1);
-                    i--;
-                }
-            }
-        }
-    }
-    debugScores.Add(SumPartTwo(needToComplete));
-    Console.WriteLine();
-    Console.Write($"{line}\tis missing:\t");
-    foreach (char item in needToComplete)
-    {
-        Console.Write(item);
-    }
 }
 
 foreach (int item in debugScores)

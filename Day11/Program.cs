@@ -1,5 +1,6 @@
 ﻿//Sets up the map array and load the input data
 using Day11;
+using System.Drawing;
 
 string[] inputArray = File.ReadAllLines("./input.txt");
 int maxColumns = inputArray[0].Length;
@@ -16,12 +17,14 @@ for (int y = 0; y < inputArray.Length; y++)
 //Settings
 int maxSteps = 100;
 bool stepThrough = false;
+int delayTime = 0;
 
 //PART ONE
 Console.WriteLine($"Step number 0");
 PrintMapArray(mapArray);
 
 int flashCounter = 0;
+int alphaStep = 255 / 10;
 //Loops through every step
 for (int i = 1; i <= maxSteps; i++)
 {
@@ -51,9 +54,27 @@ bool simultaniousFlash = false;
 int stepCounter = 1;
 while (!simultaniousFlash)
 {
+    Console.Clear();
     Console.WriteLine($"\nStep number {stepCounter}");
     mapArray = Step(mapArray);
     PrintMapArray(mapArray);
+
+    Bitmap newImg = new Bitmap(mapArray.GetLength(1), mapArray.GetLength(0));
+    for (int y = 0; y < mapArray.GetLength(0); y++)
+    {
+        for (int x = 0; x < mapArray.GetLength(1); x++)
+        {
+            Color pixelValue = Color.DarkGray;
+            pixelValue = Color.FromArgb(alphaStep * mapArray[y, x], pixelValue);
+            if(mapArray[y,x] == 0)
+            {
+                pixelValue = Color.Yellow;
+            }
+            newImg.SetPixel(x, y, pixelValue);
+        }
+    }
+    newImg.Save($"{stepCounter}.bmp");
+
     if (stepThrough)
     {
         Console.ReadLine();
@@ -64,6 +85,7 @@ while (!simultaniousFlash)
         break;
     }
     stepCounter++;
+    Thread.Sleep(delayTime);
 }
 Console.WriteLine($"PART TWO");
 Console.WriteLine($"Simultanious flash occured first at step {stepCounter}");
