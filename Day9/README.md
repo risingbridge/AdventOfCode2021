@@ -13,7 +13,7 @@
 <p>The <em>risk level</em> of a low point is <em>1 plus its height</em>. In the above example, the risk levels of the low points are <code>2</code>, <code>1</code>, <code>6</code>, and <code>6</code>. The sum of the risk levels of all low points in the heightmap is therefore <code><em>15</em></code>.</p>
 <p>Find all of the low points on your heightmap. <em>What is the sum of the risk levels of all low points on your heightmap?</em></p>
 </article>
-<p>Your puzzle answer was <code>633</code>.</p><article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>Next, you need to find the largest basins so you know what areas are most important to avoid.</p>
+<article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>Next, you need to find the largest basins so you know what areas are most important to avoid.</p>
 <p>A <em>basin</em> is all locations that eventually flow downward to a single low point. Therefore, every low point has a basin, although some basins are very small. Locations of height <code>9</code> do not count as being in any basin, and all other locations will always be part of exactly one basin.</p>
 <p>The <em>size</em> of a basin is the number of locations within the basin, including the low point. The example above has four basins.</p>
 <p>The top-left basin, size <code>3</code>:</p>
