@@ -4,7 +4,7 @@
 //If a chunk opens with {, it must close with }
 //If a chunk opens with <, it must close with >
 
-string[] inputArray = File.ReadAllLines("./test.txt");
+string[] inputArray = File.ReadAllLines("./input.txt");
 List<string> syntax = new List<string>();
 //Set to true to do char by char
 bool charByChar = false;
@@ -113,48 +113,55 @@ foreach (SyntaxLine item in syntaxLines)
     }
 }
 Console.WriteLine($"Number of incomplete lines: {incompleteLines.Count}");
-List<int> debugScores = new List<int>();
+List<long> debugScores = new List<long>();
 foreach (string line in incompleteLines)
 {
-    List<char> openings = new List<char>();
-    Stack<char> closings = new Stack<char>();
-    foreach (char c in line)
+    Stack<char> syntaxStack = new Stack<char>();
+    syntaxStack.Push(line[0]);
+    for (int i = 1; i < line.Length; i++)
     {
-        if (isOpening(c))
+        char newSyntax = line[i];
+        if (!isOpening(newSyntax))
         {
-            openings.Add(c);
+            char oldSyntax = syntaxStack.Peek();
+            if (isValidClose(oldSyntax, newSyntax))
+            {
+                syntaxStack.Pop();
+            }
         }
         else
         {
-            closings.Push(c);
+            syntaxStack.Push(newSyntax);
         }
     }
-    //Console.WriteLine($"{line} has {openings.Count} openings and {closings.Count} closings");
-    while(closings.Count > 0)
+    Console.WriteLine($"Line {line} has {syntaxStack.Count} unclosed");
+    List<char> closings = new List<char>();
+    while(syntaxStack.Count > 0)
     {
-        char closing = closings.Pop();
-        openings.RemoveAt(openings.FindIndex(c => c == FindValidOpening(closing)));
+        closings.Add(FindValidClose(syntaxStack.Pop()));
     }
-    List<char> missingCloses = new List<char>();
-    string closeString = string.Empty;
-    foreach (char c in openings)
+    Console.Write($"Missing: ");
+    long errorSum = SumPartTwo(closings);
+    foreach (char c in closings)
     {
-        missingCloses.Add(FindValidClose(c));
-        closeString += FindValidClose(c);
+        Console.Write($"{c}");
     }
-    long errorSum = SumPartTwo(missingCloses);
-    Console.WriteLine($"{line} - {closeString}");
-
+    Console.Write($" - {errorSum}");
+    debugScores.Add(errorSum);
+    Console.WriteLine("\n");
 }
 
-foreach (int item in debugScores)
+debugScores.Sort();
+foreach (long score in debugScores)
 {
-    Console.WriteLine(item);
+    Console.WriteLine($"{score}");
 }
+int middleScore = (int)Math.Round((double)(debugScores.Count / 2));
+Console.WriteLine($"Middle score: {debugScores[middleScore]}");
 
-int SumPartTwo(List<char> list)
+long SumPartTwo(List<char> list)
 {
-    int sum = 0;
+    long sum = 0;
     foreach (char c in list)
     {
         switch (c)
