@@ -76,3 +76,6 @@ foreach (KeyValuePair<string, Cave> cave in caves)
 //Pathfinding
 Cave startCave = caves["start"];
 Console.WriteLine($"Starting at {startCave.Name}");
+Cave endCave = caves["end"];
+
+//TODO: Dijkstra's algorithm
