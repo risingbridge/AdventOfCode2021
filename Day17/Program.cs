@@ -1,4 +1,5 @@
 ﻿using Day17;
+using System.Drawing;
 
 string input = File.ReadAllLines("./input.txt")[0].Replace("target area: ", "");
 string targetX = input.Split(",")[0];
@@ -46,7 +47,6 @@ for (int x = -testMax; x < testMax; x++)
                 maxY = probePos.y;
             }
             probeTrajectory.Add(probePos);
-            //Console.WriteLine($"After step {stepCounter}, probe position is X: {probePos.x} Y: {probePos.y}");
 
             if (probeVelocity.x > 0)
             {
@@ -66,15 +66,11 @@ for (int x = -testMax; x < testMax; x++)
             stepCounter++;
             if (probePos.y < startTargetY)
             {
-                //Console.WriteLine("\t-\tMissed the target!");
                 break;
             }
         }
         if (IsProbeAtTarget(probePos))
         {
-            //Console.Write($"Testing Velocity X:{startVelocity.x + x} Y:{startVelocity.y + y}");
-            //Console.Write($"\t-\tHit target position at X: {probePos.x} Y: {probePos.y}");
-            //Console.WriteLine($"\t-\tMax height is: {heightCounter}");
             if(heightCounter > HighestY)
             {
                 HighestY = heightCounter;
