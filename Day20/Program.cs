@@ -1,5 +1,6 @@
 ﻿using Day20;
 using System;
+using System.Diagnostics;
 
 string[] input = File.ReadAllLines("./input.txt");
 
@@ -27,13 +28,14 @@ Console.WriteLine("Original input:");
 PrintImage(imageMap);
 Console.WriteLine();
 Dictionary<string, char> imgToEnhance = new Dictionary<string, char>(imageDict);
+Stopwatch sw = new Stopwatch();
 for (int i = 0; i < NumberOfEnhancements; i++)
 {
+    sw.Start();
+    Console.Write($"Enhancement number {i + 1}:");
     imgToEnhance = new Dictionary<string, char>(Enhance(imgToEnhance, padding));
-    Console.WriteLine($"Enhancement number {i + 1}:");
     if((i+1) % 2 == 0)
     {
-        Console.WriteLine($"TIME TO DEPADD");
         imgToEnhance = new Dictionary<string, char>(DePadded(imgToEnhance, padding));
     }
     if (printEveryEnhancement)
@@ -41,8 +43,11 @@ for (int i = 0; i < NumberOfEnhancements; i++)
         PrintImageDict(imgToEnhance);
         Console.WriteLine();
     }
+    sw.Stop();
+    Console.WriteLine($"\tComplete, used {sw.ElapsedMilliseconds} ms");
+    sw.Reset();
 }
-Console.WriteLine($"Part one:");
+PrintImageDict(imgToEnhance);
 Console.WriteLine($"Number of lit pixels after {NumberOfEnhancements} enhancements: {CountEveryLitPixel(imgToEnhance)}");
 
 //Console.WriteLine($"Enter minimum-X for count:");
