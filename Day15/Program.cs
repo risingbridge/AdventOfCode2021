@@ -1,96 +1,81 @@
 ﻿using Day15;
 
 string[] input = File.ReadAllLines("./input.txt");
-
-int xSize = input[0].Length;
-int ySize = input.Length;
-
-int[,] map = new int[ySize, xSize];
-Vector start = new Vector(0, 0);
-Vector end = new Vector(ySize - 1, xSize - 1);
-Dictionary<Tuple<int, int>, Node> nodes = new Dictionary<Tuple<int,int>, Node>();
-for(int y = 0; y < ySize; y++)
+int[,] map = new int[input.Length, input[0].Length];
+for (int y = 0; y < input.Length; y++)
 {
-    for(int x = 0; x < xSize; x++)
+    for (int x = 0; x < input[0].Length; x++)
     {
         map[y, x] = int.Parse(input[y][x].ToString());
     }
 }
-//Generate nodes and print
-for (int y = 0; y < ySize; y++)
+
+Console.WriteLine($"Todays map: ");
+Dictionary<string, Node> nodeMap = new Dictionary<string, Node>();
+Dictionary<string, Node> openSet = new Dictionary<string, Node>();
+Dictionary<string, Node> closedSet = new Dictionary<string, Node>();
+
+for (int y = 0; y < map.GetLength(0); y++)
 {
-    for (int x = 0; x < xSize; x++)
+    for (int x = 0; x < map.GetLength(1); x++)
     {
-        Vector pos = new Vector(x, y);
-        Tuple<int,int> intPos = new Tuple<int, int>(x, y);
-        Node node = new Node()
-        {
-            X = x,
-            Y = y,
-            Neighbours = FindNeighbours(pos)
-        };
-        nodes.Add(intPos, node);
-        if(x == start.x && y == start.y)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-        }else if(x == end.x && y == end.y)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-        }
         Console.Write(map[y, x]);
-        Console.ResetColor();
+        Vector nodePos = new Vector(x, y);
+        List<Vector> neighbours = GetNeigbours(nodePos, map);
+        Dictionary<string, int> neighbourDict = new Dictionary<string, int>();
+        foreach (Vector v in neighbours)
+        {
+            int cost = map[v.y, v.x];
+            neighbourDict.Add(v.ToString(), cost);
+        }
+        Node newNode = new Node { Neighbours = neighbourDict, Position = nodePos, Cost = int.MaxValue};
+        nodeMap.Add(nodePos.ToString(), newNode);
+
     }
     Console.WriteLine();
 }
 
-//Pathfind
-Vector current = start;
-List<Vector> path = new List<Vector>();
-while(current != end)
+Vector startPos = new Vector(0, 0);
+Vector goal = new Vector(map.GetLength(1) - 1, map.GetLength(0) - 1);
+//Add all nodes to openset
+foreach (KeyValuePair<string, Node> node in nodeMap)
 {
-    path.Add(current);
-    Vector best = current;
-    int bestCost = int.MaxValue;
-    Node thisNode = nodes[new Tuple<int, int>(current.x, current.y)];
-    foreach (KeyValuePair<Vector, int> n in thisNode.Neighbours)
-    {
-        if(n.Value < bestCost)
-        {
-            bestCost = n.Value;
-            best = n.Key;
-        }
-    }
-    current = best;
+    openSet.Add(node.Key, node.Value);
+}
+//Remote start from openset and add to closed
+closedSet.Add(startPos.ToString(), openSet[startPos.ToString()]);
+openSet.Remove(startPos.ToString());
+
+Vector currentPos = startPos;
+Node current = closedSet[currentPos.ToString()];
+while (openSet.Count > 0)
+{
+    
 }
 
-//Functions
-
-Dictionary<Vector, int> FindNeighbours(Vector pos)
+List<Vector> GetNeigbours(Vector pos, int[,] map)
 {
-    Dictionary<Vector, int> neighbours = new Dictionary<Vector, int>();
-    //up y-1, x
-    //down y+1, x
-    //left y, x-1
-    //right y, x+1
-    Vector up = new Vector(pos.x, pos.y - 1);
-    Vector down = new Vector(pos.x, pos.y + 1);
-    Vector left = new Vector(pos.x - 1, pos.y);
-    Vector right = new Vector(pos.x + 1, pos.y);
+    List<Vector> neighbours = new List<Vector>();
+    Vector up = new Vector(pos.x, pos.y - 1); //Up
+    Vector down = new Vector(pos.x, pos.y + 1); //Down
+    Vector left = new Vector(pos.x - 1, pos.y); //Left
+    Vector right = new Vector(pos.x + 1, pos.y); //Right
+
     if(up.y >= 0)
     {
-        neighbours.Add(up, map[up.y, up.x]);
+        neighbours.Add(up);
     }
-    if(down.y < ySize)
+    if(down.y < map.GetLength(0))
     {
-        neighbours.Add(down, map[down.y, down.x]);
+        neighbours.Add(down);
     }
     if(left.x >= 0)
     {
-        neighbours.Add(left, map[left.y, left.x]);
+        neighbours.Add(left);
     }
-    if(right.x < xSize)
+    if (right.x < map.GetLength(1))
     {
-        neighbours.Add(right, map[right.y, right.x]);
+        neighbours.Add(right);
     }
 
     return neighbours;
